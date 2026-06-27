@@ -1,0 +1,5 @@
+# Python dependencies for Greenline Pharmacy.
+# Install with:  pip install -r requirements.txt
+# (Tkinter ships with the standard CPython installer, so it is not listed here.)
+mysql-connector-python>=9.0
+matplotlib>=3.8
