@@ -13,17 +13,22 @@ import os
 # project folder is moved to on disk.
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Connection settings for the local MySQL server. The server is started from
-# start_db.sh on a non-standard port (3309) using a project-local data
-# directory, so these values match that script. Password is empty because the
-# server was initialised with --initialize-insecure for a self-contained,
-# zero-cost setup (the client asked for a freeware / no-extra-cost system).
+# Connection settings for the MySQL server.
+#
+# Every value can be overridden with an environment variable, so the same code
+# runs on different machines without editing this file:
+#   - On the developer Mac it defaults to the bundled local server that
+#     start_db.sh launches (port 3309, root, no password).
+#   - On another computer (e.g. a standard Windows MySQL install on port 3306
+#     with a root password), set the GREENLINE_DB_* variables - most commonly
+#     just GREENLINE_DB_PORT=3306 and GREENLINE_DB_PASSWORD=your_password - or
+#     simply change the defaults below.
 DB_CONFIG = {
-    "host": "127.0.0.1",
-    "port": 3309,
-    "user": "root",
-    "password": "",
-    "database": "greenline",
+    "host": os.environ.get("GREENLINE_DB_HOST", "127.0.0.1"),
+    "port": int(os.environ.get("GREENLINE_DB_PORT", "3309")),
+    "user": os.environ.get("GREENLINE_DB_USER", "root"),
+    "password": os.environ.get("GREENLINE_DB_PASSWORD", ""),
+    "database": os.environ.get("GREENLINE_DB_NAME", "greenline"),
     # Reconnect automatically if the connection drops while the GUI is idle.
     "autocommit": False,
 }

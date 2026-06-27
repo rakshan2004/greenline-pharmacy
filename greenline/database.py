@@ -27,10 +27,26 @@ class Database:
     """
 
     def __init__(self):
-        # Open the connection immediately using the central config. A dictionary
-        # cursor is requested per-query so rows come back as {column: value}
-        # dicts, which read far more clearly in the UI code than tuples.
-        self.conn = mysql.connector.connect(**config.DB_CONFIG)
+        # Open the connection using the central config. A dictionary cursor is
+        # requested per-query so rows come back as {column: value} dicts, which
+        # read far more clearly in the UI code than tuples.
+        #
+        # The target database may not exist yet on a fresh machine, so we first
+        # connect WITHOUT selecting a database, create it if necessary, and only
+        # then open the real connection against it. This removes any need for a
+        # separate "create the database" step (important on Windows, where the
+        # Mac-only start_db.sh does not run).
+        cfg = dict(config.DB_CONFIG)
+        db_name = cfg.pop("database")
+        bootstrap_conn = mysql.connector.connect(**cfg)
+        cur = bootstrap_conn.cursor()
+        cur.execute("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8mb4" % db_name)
+        cur.close()
+        bootstrap_conn.close()
+
+        # Now connect with the database selected and keep this as the live link.
+        cfg["database"] = db_name
+        self.conn = mysql.connector.connect(**cfg)
 
     def _cursor(self, dictionary=True):
         # Internal helper that hands back a fresh cursor. ping(reconnect=True)

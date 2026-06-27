@@ -9,24 +9,47 @@ and read reports and charts instead of adding things up by hand.
 Built with **Python 3 + Tkinter** (front end) and a **MySQL** relational
 database (back end), all using freeware so there is no software cost.
 
-## How to run
+Default login on first run: **username `admin`, password `admin123`**. On first
+launch the application automatically creates the `greenline` database, builds
+every table, and fills it with realistic demo data, so there is no manual
+database setup.
 
+### Run on Windows
+1. Install **Python 3** from python.org (this includes Tkinter).
+2. Install **MySQL Community Server** (the MSI installer). During setup you set a
+   root password and MySQL runs as a service on the default port **3306**.
+3. Tell the app your MySQL password (the default install uses port 3306, not the
+   Mac dev port 3309). Either set environment variables, e.g. in PowerShell:
+   ```powershell
+   setx GREENLINE_DB_PORT 3306
+   setx GREENLINE_DB_PASSWORD your_mysql_password
+   ```
+   (re-open the terminal afterwards) or just edit the defaults in
+   `greenline/config.py`.
+4. Install dependencies and run:
+   ```powershell
+   pip install -r requirements.txt
+   python run.py
+   ```
+That is all - the app creates the database and seed data itself. `start_db.sh`
+is a macOS-only helper and is not used on Windows.
+
+### Run on macOS / Linux
 ```bash
 # 1. Start the bundled, project-local MySQL server (first run initialises it).
 ./start_db.sh
-
-# 2. Launch the application.
+# 2. Install dependencies and launch.
+pip install -r requirements.txt
 python3 run.py
 ```
 
-Default login on first run: **username `admin`, password `admin123`**. The
-database is created and filled with realistic demo data automatically the first
-time you run it.
-
 ### Requirements
 - Python 3 with the `tkinter` module (bundled with python.org installers).
-- `pip install mysql-connector-python matplotlib`
-- A `mysqld`/`mysql` binary (the start script points at the local anaconda one).
+- `pip install -r requirements.txt` (mysql-connector-python, matplotlib).
+- A reachable MySQL server. The connection is configured in
+  `greenline/config.py` and can be overridden with the `GREENLINE_DB_HOST`,
+  `GREENLINE_DB_PORT`, `GREENLINE_DB_USER`, `GREENLINE_DB_PASSWORD` and
+  `GREENLINE_DB_NAME` environment variables.
 
 ## Project structure
 
